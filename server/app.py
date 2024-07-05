@@ -19,10 +19,49 @@ db.init_app(app)
 
 api = Api(app)
 
+class Home(Resource):
+    def get(self):
+        response_dict = {
+            "message": "Code Challenge Accepted!",
+        }
 
-@app.route("/")
-def index():
-    return "<h1>Code challenge</h1>"
+        response = make_response(
+            response_dict,
+            200,
+        )
+        return response
+
+api.add_resource(Home, '/')
+
+class Pizzas(Resource):
+    def get(self):
+        pass
+api.add_resource(Pizzas, '/pizzas')
+
+class PizzaByID(Resource):
+    def get(self, id):
+        pass
+api.add_resource(PizzaByID, '/pizzas/<int:id>')
+
+class Restaurants(Resource):
+    def get(self):
+        pass
+api.add_resource(Restaurants, '/restaurants')
+
+class RestaurantByID(Resource):
+    def get(self, id):
+        pass
+api.add_resource(RestaurantByID, '/restaurants/<int:id>')
+
+class RestaurantPizzas(Resource):
+    def get(self):
+        pass
+api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
+
+class RestaurantPizzaByID(Resource):
+    def get(self, id):
+        pass
+api.add_resource(RestaurantPizzaByID, '/restaurant_pizzas/<int:id>')
 
 
 if __name__ == "__main__":

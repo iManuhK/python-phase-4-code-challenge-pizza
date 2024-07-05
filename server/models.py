@@ -46,10 +46,6 @@ class Pizza(db.Model, SerializerMixin):
     # add serialization rules
     serialize_rules = ('-restaurant_pizzas.pizza',)
 
-    # Association Proxy
-    items = association_proxy('reviews', 'item',
-                                 creator=lambda item_obj: Review(item=item_obj))
-
     def __repr__(self):
         return f"<Pizza {self.name}, {self.ingredients}>"
 
