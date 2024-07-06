@@ -55,7 +55,25 @@ api.add_resource(Restaurants, '/restaurants')
 
 class RestaurantByID(Resource):
     def get(self, id):
-        pass
+        restaurant = Restaurant.query.filter_by(id=id).first()
+        
+        restaurant_dict = restaurant.to_dict()
+        response = make_response(restaurant_dict,200)
+
+        return response
+
+    def delete(self, id):
+        restaurant = Restaurant.query.filter_by(id=id).first()
+
+        db.session.delete(restaurant)
+        db.session.commit()
+
+        response_body = {
+            "message" : "Restaurant deleted successfully"
+        }
+
+        return make_response(response_body, 204)
+
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
 
 class RestaurantPizzas(Resource):
@@ -65,7 +83,14 @@ api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
 class RestaurantPizzaByID(Resource):
     def get(self, id):
-        pass
+        restaurantpizza = RestaurantPizza.query.filter_by(id=id).first().to_dict()
+
+        return make_response(restaurantpizza, 200)
+
+    def post(self):
+        new_restaurant_pizza = (
+            
+        )
 api.add_resource(RestaurantPizzaByID, '/restaurant_pizzas/<int:id>')
 
 
