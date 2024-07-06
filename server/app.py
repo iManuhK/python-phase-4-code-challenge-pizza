@@ -35,12 +35,17 @@ api.add_resource(Home, '/')
 
 class Pizzas(Resource):
     def get(self):
-        pass
+        pizzas = [pizza.to_dict() for pizza in Pizza.query.all()]
+        response = make_response(pizzas, 200)
+        return response
 api.add_resource(Pizzas, '/pizzas')
 
 class PizzaByID(Resource):
     def get(self, id):
-        pass
+        pizza = Pizza.query.filter_by(id=id).first()
+        pizza_dict = pizza.to_dict()
+        response = make_response(pizza_dict, 200)
+        return response
 api.add_resource(PizzaByID, '/pizzas/<int:id>')
 
 class Restaurants(Resource):
