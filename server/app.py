@@ -50,7 +50,7 @@ api.add_resource(PizzaByID, '/pizzas/<int:id>')
 
 class Restaurants(Resource):
     def get(self):
-        restaurants = [restaurant.to_dict() for restaurant in Restaurant.query.all()]
+        restaurants = [restaurant.to_dict(only=('id','name','address',)) for restaurant in Restaurant.query.all()]
 
         response = make_response(restaurants, 200)
 
