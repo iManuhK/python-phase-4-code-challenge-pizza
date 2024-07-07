@@ -99,19 +99,28 @@ class RestaurantPizzas(Resource):
         return response
     
     def post(self):
-        new_restaurant_pizza = RestaurantPizza(
-              price = request.json['price'],
-              pizza_id = request.json['pizza_id'],
-              restaurant_id = request.json['restaurant_id']
-        )
-        db.session.add(new_restaurant_pizza)
-        db.session.commit()
+        try:
+            new_restaurant_pizza = RestaurantPizza(
+                price = request.json['price'],
+                pizza_id = request.json['pizza_id'],
+                restaurant_id = request.json['restaurant_id'],
+                )
+            db.session.add(new_restaurant_pizza)
+            db.session.commit()
 
-        restaurant_pizza_to_dict = new_restaurant_pizza.to_dict()
-
-        response = make_response(restaurant_pizza_to_dict, 201)
-
-        return response
+            restaurant_pizza_to_dict = new_restaurant_pizza.to_dict()
+            response = make_response(restaurant_pizza_to_dict, 201)
+            
+            return response
+        
+        # except Exception as ex:
+        #     response = {}
+        #     return make_response(response, 400)
+        except ValueError:
+            response = {
+                "errors": ["validation errors"]
+                }
+            return make_response(response, 400)
         
 api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
