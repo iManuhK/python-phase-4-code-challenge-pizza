@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from models import db, Restaurant, RestaurantPizza, Pizza
 from flask_migrate import Migrate
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response,jsonify
 from flask_restful import Api, Resource
 import os
 
@@ -50,35 +50,69 @@ api.add_resource(PizzaByID, '/pizzas/<int:id>')
 
 class Restaurants(Resource):
     def get(self):
-        pass
+        restaurants = [restaurant.to_dict() for restaurant in Restaurant.query.all()]
+
+        response = make_response(restaurants, 200)
+
+        return response
 api.add_resource(Restaurants, '/restaurants')
 
 class RestaurantByID(Resource):
     def get(self, id):
         restaurant = Restaurant.query.filter_by(id=id).first()
-        
-        restaurant_dict = restaurant.to_dict()
-        response = make_response(restaurant_dict,200)
 
-        return response
+        if restaurant:
+            restaurant_dict = restaurant.to_dict()
+            response = make_response(restaurant_dict,200)
+            return response
+        else:
+            response_body = {
+                "error": "Restaurant not found"
+            }
+            return make_response(response_body, 404)
 
     def delete(self, id):
         restaurant = Restaurant.query.filter_by(id=id).first()
+        if restaurant:
+            db.session.delete(restaurant)
+            db.session.commit()
 
-        db.session.delete(restaurant)
-        db.session.commit()
-
-        response_body = {
-            "message" : "Restaurant deleted successfully"
-        }
-
-        return make_response(response_body, 204)
+            response_body = {
+             
+            }
+            return make_response(response_body, 204)
+        
+        else:
+            response_body = {
+                "error": "Restaurant not found"
+            }
+            return make_response(response_body, 404)
 
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
 
 class RestaurantPizzas(Resource):
     def get(self):
-        pass
+        restaurantpizzas = [restaurantpizza.to_dict() for restaurantpizza in RestaurantPizza.query.all()]
+
+        response = make_response(restaurantpizzas,200)
+
+        return response
+    
+    def post(self):
+        new_restaurant_pizza = RestaurantPizza(
+              price = request.json['price'],
+              pizza_id = request.json['pizza_id'],
+              restaurant_id = request.json['restaurant_id']
+        )
+        db.session.add(new_restaurant_pizza)
+        db.session.commit()
+
+        restaurant_pizza_to_dict = new_restaurant_pizza.to_dict()
+
+        response = make_response(restaurant_pizza_to_dict, 201)
+
+        return response
+        
 api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
 
 class RestaurantPizzaByID(Resource):
@@ -87,10 +121,6 @@ class RestaurantPizzaByID(Resource):
 
         return make_response(restaurantpizza, 200)
 
-    def post(self):
-        new_restaurant_pizza = (
-            
-        )
 api.add_resource(RestaurantPizzaByID, '/restaurant_pizzas/<int:id>')
 
 
